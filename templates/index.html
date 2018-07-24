@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Controller</title>
+</head>
+<body>
+<h1 style="text-align: center;">Spotify Controller</h1>
+<p>Currently Playing: {{ CP }}</p>
+<p>Connected Devices: {{ devices }}</p>
+<a href="/play">Play</a>
+<a href="/pause">Pause</a>
+<a href="/next">Next</a>
+<a href="/previous">Previous</a>
+<a href="/volume/100">Volume</a>
+<a href="/shuffle/true">Shuffle On</a>
+<a href="/shuffle/false">Shuffle Off</a>
+<a href="/repeat/context">Repeat On</a>
+<a href="/repeat/off">Repeat Off</a>
+<p>Error Codes: {{ status }}</p>
+</body>
+</html>
