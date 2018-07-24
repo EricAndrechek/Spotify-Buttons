@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Spotify Controller</title>
+    <style>
+        .dev {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <h1 style="text-align: center;"><a href="/">Spotify Controller</a></h1>
@@ -17,10 +22,27 @@
 <a href="/shuffle/false">Shuffle Off</a>
 <a href="/repeat/context">Repeat On</a>
 <a href="/repeat/off">Repeat Off</a>
-<p>Error Codes: <span id="error">{{ status }}</span></p>
 <p><a href="/login">Click here to login</a></p>
+<button onclick="devtog()">Toggle Developer Mode</button>
+<p class="dev">Command Response: <span id="error">{{ status }}</span></p>
+<p class="dev">Currently Playing: <span id="Currently Playing">{{ CP }}</span></p>
+<p class="dev">Connected Devices: <span id="Connected Devices">{{ devices }}</span></p>
 <script>
-
+    function devtog() {
+        var display = document.getElementsByClassName('dev')[1].style.display;
+        if (display === "none") {
+            cac('block');
+        } else {
+            cac('none');
+        }
+    }
+    function cac(display) {
+        var x = document.getElementsByClassName("dev").length;
+        var i;
+        for (i = 0; i < x; i++) {
+            document.getElementsByClassName('dev')[i].style.display = display;
+        }
+    }
 </script>
 </body>
 </html>

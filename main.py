@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 key = ''
 
+
 # devices:
 
 def devices():
@@ -50,7 +51,7 @@ def play():
 
     response = requests.request("PUT", url, headers=headers)
 
-    return "Response: {}, Key: {}".format(response.text, key)
+    return response.text
 
 
 # pause:
@@ -140,7 +141,10 @@ def cp():
         'Cache-Control': "no-cache"
     }
     response = requests.request("GET", url, headers=headers)
-    return response.text
+
+    response_data = json.loads(response.text)
+    artist = response_data["item","album","artists","name"]
+    return artist
 
 
 # set redirect URI:
@@ -187,7 +191,7 @@ def callback():
         data = {
             'CP': cp(),
             'devices': devices(),
-            'status': key
+            'status': response
         }
         return render_template("index.html", **data)
     else:
@@ -217,7 +221,6 @@ def action(action):
     return render_template("index.html", **data)
 
 
-
 @app.route("/<action>/<toggle>")
 def toggle(action, toggle):
     if action == "volume":
@@ -234,9 +237,6 @@ def toggle(action, toggle):
         'devices': devices()
     }
     return render_template("index.html", **data)
-
-
-
 
 
 @app.errorhandler(404)
