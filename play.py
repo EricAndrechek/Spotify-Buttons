@@ -3,7 +3,7 @@ import requests
 url = "https://api.spotify.com/v1/me/player/play"
 
 headers = {
-    'Authorization': "Bearer BQARTn__0MVGMa8FUI-OsrXRdMAxaV2a62bEKzy5sy7PeRM4mwPPV8e0NMHpBH1lMRIaJxt9Ul9N2FTwl7jwKOJwCD7pVTDSXi_kHHtmoj9U2qQwTtcfiysRViEOk3t5EQ1K65Fd9dl-imYfUZr115p5c1oXYqFAckxInUk8P27qgKXKVO9gpVDXkYnBaaKV765lc2quhFEHxK-OO7DzSInvKFhev5OM9_MsogntT2ebXY_diPm1U0jDMKyaXfZwot2s1hFXw5S9eipbPD4ZsowEO8eFB8AAtStB",
+    'Authorization': "Bearer BQAebRKsggHm-1ccdDNo7arccJxPH6Y1jlTiuDLsF8JWRRCMBiPH2o1vKP2ib92S0Q9NgVE07N-XCQGOZaF4qUCye3sAsDsDupbK4gVwp0Pah_kKL6lOsH7hbBKrDuG-ZLkFtMj8IDzUiqjeSd0sDpw88V160KLkI84g4ZKM9VXGrehZyBkbgJnv-IhhRIq1NNqZlcJG6vUUUfcvXYPdp_RIKPKV5cmROwOyswsW7kNYPHmRA2BTX-JabcDTBbBDOSe5PFJXZlVkevIBZrVq4Ptap8yET9b771DF",
     'Cache-Control': "no-cache"
     }
 
