@@ -134,20 +134,52 @@ def repeat(toggle):
 
 # Currently Playing:
 
-def cp():
+def cp(to_get):
     url = "https://api.spotify.com/v1/me/player/currently-playing"
     headers = {
         'Authorization': "Bearer %s" % key,
         'Cache-Control': "no-cache"
     }
     response = requests.request("GET", url, headers=headers)
+    json_file = response.text
+    if json_file[5:14] == "timestamp":
+        response_data = json.loads(response.text)
+        item = response_data["item"]
+        album = item["album"]
+        artists = album["artists"]
+        artistsub = artists[0]
+        name = artistsub["name"]
+        images = album["images"]
+        imagesub = images[0]
+        url = imagesub["url"]
+        song = item["name"]
+        progress = response_data["progress_ms"]
+        duration = item["duration_ms"]
+        if to_get == "artist":
+            return name
+        elif to_get == "song":
+            return song
+        elif to_get == "img":
+            return url
+        elif to_get == "time":
+            return time(progress, duration)
+        elif to_get == "dev":
+            return response.text
+        else:
+            return "{} NOTICE: If you are seeing this message and are able to control your content normally, something may be wrong.".format(response.text)
+    else:
+        return "{} NOTICE: If you are seeing this message and are able to control your content normally, something may be wrong.".format(response.text)
 
-    response_data = json.loads(response.text)
-    artist = response_data["item","album","artists","name"]
-    return artist
+
+# function for displaying progress bar on song
+
+def time(pro, dur):
+    # this function will provide a bar to show the progress through the current song (not yet setup)
+    return "{} of {} ms complete of song".format(pro, dur)
 
 
 # set redirect URI:
+
 CLIENT_SIDE_URL = "http://127.0.0.1"
 PORT = 5000
 REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
@@ -156,7 +188,11 @@ REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
 @app.route('/')
 def main():
     data = {
-        'CP': cp(),
+        'CPA': cp("artist"),
+        'CPS': cp("song"),
+        'CPI': cp("img"),
+        'CPT': cp("time"),
+        'CP': cp("dev"),
         'devices': devices(),
         'status': "You are not logged in. Click the link below to login"
     }
@@ -165,7 +201,7 @@ def main():
 
 @app.route('/login')
 def login():
-    return redirect('https://accounts.spotify.com/authorize/?client_id=470f615d8cb342e488fe71416ffb504c&scope=user-read-playback-state%20user-read-private%20user-read-currently-playing%20user-modify-playback-state&response_type=code&show_dialog=true&redirect_uri={}'.format(REDIRECT_URI), code=302)
+    return redirect('https://accounts.spotify.com/authorize/?client_id=470f615d8cb342e488fe71416ffb504c&scope=user-read-playback-state%20user-read-private%20user-read-currently-playing%20user-modify-playback-state&response_type=code&redirect_uri={}'.format(REDIRECT_URI), code=302)
 
 
 @app.route('/callback/q')
@@ -189,7 +225,11 @@ def callback():
         token_type = response_data["token_type"]
         expires_in = response_data["expires_in"]
         data = {
-            'CP': cp(),
+            'CPA': cp("artist"),
+            'CPS': cp("song"),
+            'CPI': cp("img"),
+            'CPT': cp("time"),
+            'CP': cp("dev"),
             'devices': devices(),
             'status': response
         }
@@ -214,7 +254,11 @@ def action(action):
     else:
         status = "the \'%s\' command didn't match an assigned function" % action
     data = {
-        'CP': cp(),
+        'CPA': cp("artist"),
+        'CPS': cp("song"),
+        'CPI': cp("img"),
+        'CPT': cp("time"),
+        'CP': cp("dev"),
         'status': status,
         'devices': devices()
     }
@@ -232,7 +276,11 @@ def toggle(action, toggle):
     else:
         status = "the \'%s\' command didn't match an assigned function with sub-command \'%s\'" % action % toggle
     data = {
-        'CP': cp(),
+        'CPA': cp("artist"),
+        'CPS': cp("song"),
+        'CPI': cp("img"),
+        'CPT': cp("time"),
+        'CP': cp("dev"),
         'status': status,
         'devices': devices()
     }
@@ -242,7 +290,11 @@ def toggle(action, toggle):
 @app.errorhandler(404)
 def page_not_found(e):
     data = {
-        'CP': cp(),
+        'CPA': cp("artist"),
+        'CPS': cp("song"),
+        'CPI': cp("img"),
+        'CPT': cp("time"),
+        'CP': cp("dev"),
         'status': '404: page not found. This may be because you are not logged in. Click the link below to login',
         'devices': devices()
     }
