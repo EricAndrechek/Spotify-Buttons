@@ -1,7 +1,9 @@
+from __future__ import division
 from flask import Flask, render_template, request, redirect
 import requests
 import base64
 import json
+import math
 
 app = Flask(__name__)
 
@@ -155,6 +157,11 @@ def cp(to_get):
         song = item["name"]
         progress = response_data["progress_ms"]
         duration = item["duration_ms"]
+        ppdata = response_data["is_playing"]
+        if ppdata is True:
+            pp = "pause"
+        else:
+            pp = "play"
         if to_get == "artist":
             return name
         elif to_get == "song":
@@ -162,20 +169,43 @@ def cp(to_get):
         elif to_get == "img":
             return url
         elif to_get == "time":
-            return time(progress, duration)
+            return progress / duration
+        elif to_get == "pro":
+            prosec = progress / 1000
+            prominrem = prosec / 60
+            prorem = prosec % 60 / 60
+            promin = prominrem - prorem
+            prosec = prorem * 60
+            profinsec = math.floor(prosec)
+            if profinsec < 10:
+                profinsecsml1 = "0{}".format(profinsec)
+                profinsecsml = profinsecsml1.split(".")[0]
+            else:
+                profinsecsml = str(math.floor(prosec)).split(".")[0]
+            profin = "{}:{}".format(str(math.floor(promin)).split(".")[0], profinsecsml)
+            return profin
+        elif to_get == "dur":
+            dursec = duration / 1000
+            durminrem = dursec / 60
+            durrem = dursec % 60 / 60
+            durmin = durminrem - durrem
+            dursec = durrem * 60
+            durfinsec = math.floor(dursec)
+            if durfinsec < 10:
+                durfinsecsml1 = "0{}".format(durfinsec)
+                durfinsecsml = durfinsecsml1.split(".")[0]
+            else:
+                durfinsecsml = str(math.floor(dursec)).split(".")[0]
+            durfin = "{}:{}".format(str(math.floor(durmin)).split(".")[0], durfinsecsml)
+            return durfin
         elif to_get == "dev":
             return response.text
+        elif to_get == "pp":
+            return pp
         else:
             return "{} NOTICE: If you are seeing this message and are able to control your content normally, something may be wrong.".format(response.text)
     else:
         return "{} NOTICE: If you are seeing this message and are able to control your content normally, something may be wrong.".format(response.text)
-
-
-# function for displaying progress bar on song
-
-def time(pro, dur):
-    # this function will provide a bar to show the progress through the current song (not yet setup)
-    return "{} of {} ms complete of song".format(pro, dur)
 
 
 # set redirect URI:
@@ -192,7 +222,10 @@ def main():
         'CPS': cp("song"),
         'CPI': cp("img"),
         'CPT': cp("time"),
+        'CPTP': cp("pro"),
+        'CPTD': cp("dur"),
         'CP': cp("dev"),
+        'pp': cp("pp"),
         'devices': devices(),
         'status': "You are not logged in. Click the link below to login"
     }
@@ -229,7 +262,10 @@ def callback():
             'CPS': cp("song"),
             'CPI': cp("img"),
             'CPT': cp("time"),
+            'CPTP': cp("pro"),
+            'CPTD': cp("dur"),
             'CP': cp("dev"),
+            'pp': cp("pp"),
             'devices': devices(),
             'status': response
         }
@@ -258,8 +294,11 @@ def action(action):
         'CPS': cp("song"),
         'CPI': cp("img"),
         'CPT': cp("time"),
+        'CPTP': cp("pro"),
+        'CPTD': cp("dur"),
         'CP': cp("dev"),
         'status': status,
+        'pp': cp("pp"),
         'devices': devices()
     }
     return render_template("index.html", **data)
@@ -280,8 +319,11 @@ def toggle(action, toggle):
         'CPS': cp("song"),
         'CPI': cp("img"),
         'CPT': cp("time"),
+        'CPTP': cp("pro"),
+        'CPTD': cp("dur"),
         'CP': cp("dev"),
         'status': status,
+        'pp': cp("pp"),
         'devices': devices()
     }
     return render_template("index.html", **data)
@@ -294,7 +336,10 @@ def page_not_found(e):
         'CPS': cp("song"),
         'CPI': cp("img"),
         'CPT': cp("time"),
+        'CPTP': cp("pro"),
+        'CPTD': cp("dur"),
         'CP': cp("dev"),
+        'pp': cp("pp"),
         'status': '404: page not found. This may be because you are not logged in. Click the link below to login',
         'devices': devices()
     }
