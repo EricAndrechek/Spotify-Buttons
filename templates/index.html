@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Spotify Controller</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <style>
         .dev {
             display: none;
@@ -25,8 +27,8 @@
             border-radius: 15px;
             heigth: 5px;
             text-align: center;
-            margin-left: 25%;
-            width: 50%;
+            margin-left: 32.5%;
+            width: 35%;
             background-color: grey;
         }
         #myBar {
@@ -51,17 +53,26 @@
         #pause {
             display: none;
         }
-        .prev {
-            float: left;
-            top: 0;
-        }
-        .next {
-            float: right;
-            margin-top: -50px;
-        }
         .button-box {
-            width: 50%;
-            margin-left: 25%;
+            width: 35%;
+            margin-left: 32.5%;
+            height: 50px;
+        }
+        .button-box2 {
+            width: 90%;
+            margin-left: 5%;
+            height: 50px;
+            text-align: center;
+        }
+        .button-box22 {
+            width: 65%;
+            margin-left: 17.5%;
+            height: 50px;
+            text-align: center;
+        }
+        .button-box23 {
+            width: 35%;
+            margin-left: 32.5%;
             height: 50px;
         }
         .left {
@@ -70,68 +81,110 @@
         .right {
             float: right;
         }
+        .devices {
+        }
+        .volume {
+            margin-top: -50px;
+        }
+        .shuffle {
+        }
+        .repeat {
+            margin-top: -50px;
+        }
+        .prev {
+        }
+        .next {
+            margin-top: -25px;
+        }
+        #big {
+            display: block;
+        }
+        #small {
+            display: none;
+        }
+        #none {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div id="Currently Playing">
-<div class="center">
-    <h1 style="text-align: center;"><a href="/">Spotify Controller</a></h1>
-        <span><img src="{{ CPI }}"></span>
+    <div class="center">
+        <h1 style="text-align: center;"><a href="/">Spotify Controller</a></h1>
+        <span><img width="25%" src="{{ CPI }}"></span>
+        <br>
         <div id="myProgress">
             <div id="myBar"></div>
         </div>
-    <br>
-    <div class="button-box">
-    <span class="left">{{ CPTP }}</span>
-    <span>{{ CPS }}</span>
-    <span class="right">{{ CPTD }}</span>
-    <br><span class="center">{{ CPA }}</span>
-    </div>
-    <br>
-    <div class="button-box center">
-    <a class="prev" href="/previous">
-        <button id="button">
-            &#8592;
-        </button>
-    </a>
-    <span class="center" id="play">
-        <a href="/play">
-            <button id="button">
-                &#9658;
-            </button>
-        </a>
-    </span>
-    <span class="center" id="pause">
-        <a href="/pause">
-            <button id="button">
-                &#9612;&#9612;
-            </button>
-        </a>
-    </span>
-    <a class="next" href="/next">
-        <button id="button">
-            &#8594;
-        </button>
-    </a>
-    </div>
+        <br>
+        <div class="button-box">
+            <span class="left">{{ CPTP }}</span>
+            <span>{{ CPS }}</span>
+            <span class="right">{{ CPTD }}</span>
+            <br><span class="center">{{ CPA }}</span>
+        </div>
+        <br>
+        <div class="button-box2">
+            <a class="device left" href="/">
+                <i class="material-icons">devices</i>
+            </a>
+            <div class="button-box22 center">
+                <a class="shuffle left" href="/shuffle/{{ CPST }}">
+                    <i class="material-icons">shuffle</i>
+                </a>
+                <div class="button-box23">
+                    <a class="prev left" href="/previous">
+                        <i class="material-icons">skip_previous</i>
+                    </a>
+                    <span class="center" id="play">
+                        <a href="/play">
+                            <i class="material-icons">play_arrow</i>
+                        </a>
+                    </span>
+                    <span class="center" id="pause">
+                        <a href="/pause">
+                            <i class="material-icons">pause</i>
+                        </a>
+                    </span>
+                    <a class="next right" href="/next">
+                        <i class="material-icons">skip_next</i>
+                    </a>
+                </div>
+                <a class="repeat right" href="/repeat/{{ CPRT }}">
+                    <i class="material-icons">repeat</i>
+                </a>
+            </div>
+            <a id="big" class="volume right" href="/">
+                <i class="material-icons">volume_up</i>
+            </a>
+            <a id="small" class="volume right" href="/">
+                <i class="material-icons">volume_down</i>
+            </a>
+            <a id="none" class="volume right" href="/">
+                <i class="material-icons">volume_off</i>
+            </a>
+        </div>
     </div>
 </div>
 <p>Connected Devices: <span id="Connected Devices">{{ devices }}</span></p>
-<a href="/play">Play</a>
-<a href="/pause">Pause</a>
-<a href="/next">Next</a>
-<a href="/previous">Previous</a>
-<a href="/volume/100">Volume</a>
-<a href="/shuffle/true">Shuffle On</a>
-<a href="/shuffle/false">Shuffle Off</a>
-<a href="/repeat/context">Repeat On</a>
-<a href="/repeat/off">Repeat Off</a>
 <p><a href="/login">Click here to login</a></p>
 <button onclick="devtog()">Toggle Developer Mode</button>
 <p class="dev">Command Response: <span id="error">{{ status }}</span></p>
 <p class="dev">Currently Playing: <span id="Currently Playing">{{ CP }}</span></p>
 <p class="dev">Connected Devices: <span id="Connected Devices">{{ devices }}</span></p>
 <script>
+    var shuffle = "{{ CPST }}";
+    var repeat = "{{ CPRT }}";
+    if (shuffle === "false") {
+        document.getElementsByClassName("shuffle")[0].style.color = "green"
+    } else {
+        document.getElementsByClassName("shuffle")[0].style.color = "white"
+    }
+    if (repeat === "off") {
+        document.getElementsByClassName("repeat")[0].style.color = "green"
+    } else {
+        document.getElementsByClassName("repeat")[0].style.color = "white"
+    }
     var pp = "{{ pp }}";
     if (pp === "pause") {
         document.getElementById("play").style.display = "none";

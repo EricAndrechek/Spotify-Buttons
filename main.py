@@ -202,6 +202,32 @@ def cp(to_get):
             return response.text
         elif to_get == "pp":
             return pp
+        elif to_get == "shuffle":
+            url = "https://api.spotify.com/v1/me/player"
+            headers = {
+                'Authorization': "Bearer %s" % key,
+                'Cache-Control': "no-cache"
+            }
+            response = requests.request("GET", url, headers=headers)
+            json_file = json.loads(response.text)
+            shufflestate = json_file["shuffle_state"]
+            if shufflestate is True:
+                return "false"
+            else:
+                return "true"
+        elif to_get == "repeat":
+            url = "https://api.spotify.com/v1/me/player"
+            headers = {
+                'Authorization': "Bearer %s" % key,
+                'Cache-Control': "no-cache"
+            }
+            response = requests.request("GET", url, headers=headers)
+            json_file = json.loads(response.text)
+            repeatstate = json_file["repeat_state"]
+            if (repeatstate == "track") or (repeatstate == "context"):
+                return "off"
+            else:
+                return "context"
         else:
             return "{} NOTICE: If you are seeing this message and are able to control your content normally, something may be wrong.".format(response.text)
     else:
@@ -224,12 +250,17 @@ def main():
         'CPT': cp("time"),
         'CPTP': cp("pro"),
         'CPTD': cp("dur"),
+        'CPST': cp("shuffle"),
+        'CPRT': cp("repeat"),
         'CP': cp("dev"),
         'pp': cp("pp"),
         'devices': devices(),
         'status': "You are not logged in. Click the link below to login"
     }
-    return render_template("index.html", **data)
+    if cp("dev")[5:14] != "timestamp":
+        return redirect("/login", code=302)
+    else:
+        return render_template("index.html", **data)
 
 
 @app.route('/login')
@@ -264,6 +295,8 @@ def callback():
             'CPT': cp("time"),
             'CPTP': cp("pro"),
             'CPTD': cp("dur"),
+            'CPST': cp("shuffle"),
+            'CPRT': cp("repeat"),
             'CP': cp("dev"),
             'pp': cp("pp"),
             'devices': devices(),
@@ -274,7 +307,10 @@ def callback():
         data = {
             'status': 'Error logging in - access denied'
         }
-        return render_template("index.html", **data)
+        if cp("dev")[5:14] != "timestamp":
+            return redirect("/login", code=302)
+        else:
+            return render_template("index.html", **data)
 
 
 @app.route("/<action>")
@@ -296,12 +332,17 @@ def action(action):
         'CPT': cp("time"),
         'CPTP': cp("pro"),
         'CPTD': cp("dur"),
+        'CPST': cp("shuffle"),
+        'CPRT': cp("repeat"),
         'CP': cp("dev"),
         'status': status,
         'pp': cp("pp"),
         'devices': devices()
     }
-    return render_template("index.html", **data)
+    if cp("dev")[5:14] != "timestamp":
+        return redirect("/login", code=302)
+    else:
+        return render_template("index.html", **data)
 
 
 @app.route("/<action>/<toggle>")
@@ -321,12 +362,17 @@ def toggle(action, toggle):
         'CPT': cp("time"),
         'CPTP': cp("pro"),
         'CPTD': cp("dur"),
+        'CPST': cp("shuffle"),
+        'CPRT': cp("repeat"),
         'CP': cp("dev"),
         'status': status,
         'pp': cp("pp"),
         'devices': devices()
     }
-    return render_template("index.html", **data)
+    if cp("dev")[5:14] != "timestamp":
+        return redirect("/login", code=302)
+    else:
+        return render_template("index.html", **data)
 
 
 @app.errorhandler(404)
@@ -338,12 +384,17 @@ def page_not_found(e):
         'CPT': cp("time"),
         'CPTP': cp("pro"),
         'CPTD': cp("dur"),
+        'CPST': cp("shuffle"),
+        'CPRT': cp("repeat"),
         'CP': cp("dev"),
         'pp': cp("pp"),
         'status': '404: page not found. This may be because you are not logged in. Click the link below to login',
         'devices': devices()
     }
-    return render_template('index.html', **data), 404
+    if cp("dev")[5:14] != "timestamp":
+        return redirect("/login", code=302)
+    else:
+        return render_template("index.html", **data), 404
 
 
 if __name__ == '__main__':
